@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package com.gdw.netty.sixthexample;
+option java_outer_classname = "MultiDataInfo";
+
+message MyMessage{
+   enum DataType{
+      PERSON = 0;
+      DOG = 1;
+      CAT = 2;
+   }
+   DataType data_type =1;
+   oneof DataBody{
+      Person person = 2;
+      Dog dog = 3;
+      Cat cat = 4;
+   }
+}
+
+message Person{
+   string name = 1;
+   int32 age = 2;
+   string address = 3;
+}
+
+message Dog{
+   string name = 1;
+   int32 age = 2;
+}
+
+message Cat{
+   string name = 1;
+   string city = 2;
+}
