@@ -14,13 +14,14 @@ repositories {
 }
 
 dependencies {
-    testCompile("junit", "junit", "4.12")
-    compile("io.netty", "netty-all", "4.1.10.Final")
-    compile("com.google.protobuf", "protobuf-java", "3.6.1")
-    compile("org.apache.thrift", "libthrift", "0.11.0")
+    testCompile("junit:junit:4.12")
+    compile("io.netty:netty-all:4.1.10.Final")
+    compile("org.apache.thrift:libthrift:0.11.0")
     compile("com.google.protobuf:protobuf-java:3.6.1")
-    compile("io.grpc:grpc-stub:1.15.1")
-    compile("io.grpc:grpc-protobuf:1.15.1")
+    compile("io.grpc:grpc-netty-shaded:1.17.1")
+    compile("io.grpc:grpc-core:1.17.1")
+    compile("io.grpc:grpc-stub:1.17.1")
+    compile("io.grpc:grpc-protobuf:1.17.1")
     if (JavaVersion.current().isJava9Compatible) {
         compile("javax.annotation:javax.annotation-api:1.3.1")
     }
@@ -29,6 +30,10 @@ dependencies {
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
 }
 
 protobuf {
@@ -47,8 +52,13 @@ protobuf {
     generateProtoTasks {
         ofSourceSet("main").forEach {
             it.plugins(closureOf<NamedDomainObjectContainer<GenerateProtoTask.PluginOptions>> {
-                this{ id("grpc") }
+                this{
+                    id("grpc") {
+                        outputSubDir = "java"
+                    }
+                }
             })
         }
     }
+    generatedFilesBaseDir = "$projectDir/src"
 }
